@@ -1,11 +1,8 @@
 import typing as t
 from urllib.parse import urlparse, unquote, parse_qs
 
-import aioredis  # type: ignore
-
 from .base import FixStore # NOQA
 from .inmemory import MemoryStore # NOQA
-from .redis import RedisStore # NOQA
 
 
 if t.TYPE_CHECKING:
@@ -37,6 +34,8 @@ async def create_store(config: "FixSessionConfig", dsn: str) -> FixStore:
             prefix = None
 
         redis_url = f"redis://{host}:{port}"
+        import aioredis  # type: ignore
+        from .redis import RedisStore # NOQA
         redis = await aioredis.create_redis_pool(redis_url, maxsize=5)
         store = RedisStore(config, redis, prefix)
     else:
