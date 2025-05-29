@@ -2,59 +2,28 @@ import typing as t
 from ssl import SSLContext
 from urllib.parse import urlparse, parse_qs, unquote
 
+from pydantic import BaseModel, ConfigDict
+
 
 FIX_VERSIONS = {"4.2", "4.4", "5.0"}
 MISSING = "Missing value for '%s'"
 DEFAULT_FIX_VERSION = "4.2"
 
 
-class FixSessionConfig:
+class FixSessionConfig(BaseModel):
+    host: str
+    port: int
+    version: str
+    sender: str
+    target: str
+    hb_int: int
+    qualifier: str
+    account: t.Optional[str]
+    ssl: t.Optional[SSLContext] = None
 
-    __slots__ = (
-        "host",
-        "port",
-        "version",
-        "sender",
-        "target",
-        "hb_int",
-        "qualifier",
-        "account",
-        "ssl",
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
     )
-
-    def __init__(
-        self,
-        host: str,
-        port: int,
-        version: str,
-        sender: str,
-        target: str,
-        hb_int: int,
-        qualifier: str,
-        account: t.Optional[str],
-        ssl: t.Optional[SSLContext] = None,
-    ):
-        self.host = host
-        self.port = port
-        self.version = version
-        self.sender = sender
-        self.target = target
-        self.hb_int = hb_int
-        self.qualifier = qualifier
-        self.account = account
-        self.ssl = ssl
-
-    def asdict(self) -> dict:
-        return {
-            "host": self.host,
-            "port": self.port,
-            "version": self.version,
-            "sender": self.sender,
-            "target": self.target,
-            "hb_int": self.hb_int,
-            "qualifier": self.qualifier,
-            "account": self.account,
-        }
 
 
 def parse_conn_args(
