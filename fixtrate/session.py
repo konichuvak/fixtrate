@@ -336,6 +336,7 @@ class FixSession:
                     self._state.isset(FLAG_WAIT_RESEND)
                     or helpers.is_reset_mode(msg)
                 ):
+                    logger.warning(f'Missing {gap} messages from remote, requesting resend.')
                     resend_request = helpers.make_resend_request(expected, 0)
                     await self.send(resend_request)
                     self._state.set(FLAG_WAIT_RESEND)
@@ -366,7 +367,7 @@ class FixSession:
                         self._reset_request = None
                     else:
                         logger.info(
-                            f"Received a reset message from {self.config.sender}: {msg}"
+                            f"Received a log on message from {self.config.sender}: {msg}"
                         )
                         if self._state.isset(FLAG_INIT_LOGON):
                             self._state.unset(FLAG_INIT_LOGON)
