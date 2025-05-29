@@ -6,6 +6,7 @@ from .utils.enum import BaseStrEnum, BaseIntEnum
 class FixVersion(BaseStrEnum):
     FIX42 = 'FIX.4.2'
     FIX44 = 'FIX.4.4'
+    FIX50 = 'FIX.5.0'
 
 
 @enum.unique

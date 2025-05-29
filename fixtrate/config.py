@@ -3,7 +3,7 @@ from ssl import SSLContext
 from urllib.parse import urlparse, parse_qs, unquote
 
 
-FIX_VERSIONS = {"4.2", "4.4"}
+FIX_VERSIONS = {"4.2", "4.4", "5.0"}
 MISSING = "Missing value for '%s'"
 DEFAULT_FIX_VERSION = "4.2"
 
@@ -156,13 +156,13 @@ def parse_conn_args(
     if not qualifier:
         qualifier = ""
 
-    if version not in FIX_VERSIONS:
-        raise ValueError(
-            f"{version} is not a valid FIX version ,"
-            f"please specify one of: {' ,'.join(FIX_VERSIONS)}"
-        )
-
-    version = f"FIX.{version}"
+    # if version not in FIX_VERSIONS:
+    #     raise ValueError(
+    #         f"{version} is not a valid FIX version ,"
+    #         f"please specify one of: {' ,'.join(FIX_VERSIONS)}"
+    #     )
+    #
+    # version = f"FIX.{version}"
 
     if hb_int is None:
         hb_int = 30
