@@ -229,6 +229,9 @@ class FixSession:
             await self._store.store_msg(msg)
             if incr:
                 await self._store.incr_local()
+            if logger.isEnabledFor(logging.DEBUG):
+                msg_repr = msg.encode().replace(b"\x01", b"|")
+                logger.debug(f"Sending message: {msg_repr}")
             self._outq.put_nowait(msg)
 
     async def _drain(self) -> None:
@@ -322,6 +325,9 @@ class FixSession:
             except exc.SessionError:
                 await self.close()
                 raise
+
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"Received message: {msg}")
 
             expected = await self._store.get_remote()
             gap = msg.seq_num - expected
