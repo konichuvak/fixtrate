@@ -47,7 +47,6 @@ async def _connect(config: FixSessionConfig, store_dsn: str) -> FixSession:
         store=store,
         transport=transport,
     )
-    await session.logon()
     return session
 
 

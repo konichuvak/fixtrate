@@ -366,11 +366,19 @@ class FixSession:
                         await self._store.store_msg(self._reset_request, msg)
                         self._reset_request = None
                     else:
-                        await self._store.store_msg(msg)
-                        await self._send(
-                            helpers.make_logon_msg(self._hb_int, reset=True),
-                            incr=False
+                        logger.info(
+                            f"Received a reset message from {self.config.sender}: {msg}"
                         )
+                        if self._state.isset(FLAG_INIT_LOGON):
+                            self._state.unset(FLAG_INIT_LOGON)
+                        # logger.debug((await self._store.get_local(), await self._store.get_remote()))
+                        await self._store.reset()
+                        # logger.debug((await self._store.get_local(), await self._store.get_remote()))
+                        # await self._store.store_msg(msg)
+                        # await self._send(
+                        #     helpers.make_logon_msg(self._hb_int, reset=True),
+                        #     incr=False
+                        # )
                 else:
                     if self._state.isset(FLAG_INIT_LOGON):
                         self._state.unset(FLAG_INIT_LOGON)
@@ -383,7 +391,8 @@ class FixSession:
                     self._state.set(FLAG_LOGOUT_RESEND)
                 await self.send(helpers.make_logout_msg())
                 self._state.toggle(FLAG_WAIT_LOGOUT)
-                self._state.unset(FLAG_LOGGED_ON)
+                self._state.unset(FLAG_LOGGED_ON | FLAG_INIT_LOGON)
+                await self._store.reset()  # ?
 
             elif msg.msg_type == MTYPE.TEST_REQUEST:
                 test_request_id = msg.get_raw(TAGS.TestReqID)
