@@ -1,5 +1,6 @@
 import asyncio as aio
 import logging
+import ssl
 import typing as t
 
 from .utils import aio as aioutils
@@ -27,12 +28,11 @@ async def _logout_session(session: FixSession):
 
 async def _connect(config: FixSessionConfig, store_dsn: str) -> FixSession:
     """
-    Coroutine that waits for a successfuly connection to a FIX peer.
+    Coroutine that waits for a successful connection to a FIX peer.
     Returns a FixConnection object. Can also be used as an async context
     manager, in which case the connection is automatically closed on
     exiting the context manager.
 
-    :param address: tuple of (ip, port)
     :return: :class:`FixConnection` object
     :rtype: FixConnection
     """
@@ -41,7 +41,7 @@ async def _connect(config: FixSessionConfig, store_dsn: str) -> FixSession:
         f"tcp://{config.host}:{config.port}"
     )
     store = await create_store(config, store_dsn)
-    transport = await TCPTransport.connect(config.host, config.port)
+    transport = await TCPTransport.connect(config.host, config.port, config.ssl)
     session = FixSession(
         config=config,
         store=store,
@@ -89,6 +89,7 @@ def connect(
     qualifier: t.Optional[str] = None,
     account: t.Optional[str] = None,
     store_dsn: str = "inmemory://",
+    ssl_context: t.Optional[ssl.SSLContext] = None,
 ) -> aioutils.AwaitableContextManager["FixSession"]:
     config = parse_conn_args(
         dsn=dsn,
@@ -100,6 +101,7 @@ def connect(
         hb_int=hb_int,
         qualifier=qualifier,
         account=account,
+        ssl_context=ssl_context,
     )
     return aioutils.AwaitableContextManager(
         _connect(config, store_dsn),

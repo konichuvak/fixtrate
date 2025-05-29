@@ -1,4 +1,5 @@
 import typing as t
+from ssl import SSLContext
 from urllib.parse import urlparse, parse_qs, unquote
 
 
@@ -18,6 +19,7 @@ class FixSessionConfig:
         "hb_int",
         "qualifier",
         "account",
+        "ssl",
     )
 
     def __init__(
@@ -30,6 +32,7 @@ class FixSessionConfig:
         hb_int: int,
         qualifier: str,
         account: t.Optional[str],
+        ssl: t.Optional[SSLContext] = None,
     ):
         self.host = host
         self.port = port
@@ -39,6 +42,7 @@ class FixSessionConfig:
         self.hb_int = hb_int
         self.qualifier = qualifier
         self.account = account
+        self.ssl = ssl
 
     def asdict(self) -> dict:
         return {
@@ -63,6 +67,7 @@ def parse_conn_args(
     hb_int: t.Optional[int] = None,
     qualifier: str = None,
     account: t.Optional[str] = None,
+    ssl_context: t.Optional[SSLContext] = None,
 ) -> FixSessionConfig:
 
     if dsn:
@@ -171,4 +176,5 @@ def parse_conn_args(
         hb_int=hb_int,
         qualifier=qualifier,
         account=account,
+        ssl=ssl_context,
     )

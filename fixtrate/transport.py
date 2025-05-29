@@ -1,5 +1,7 @@
 import asyncio
 import logging
+from ssl import SSLContext
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +52,13 @@ class TCPTransport(Transport):
     async def connect(
         cls,
         host: str,
-        port: int
+        port: int,
+        ssl_context: Optional[SSLContext] = None
     ) -> "TCPTransport":
         reader, writer = await asyncio.open_connection(
-            host=host, port=port)
+            host=host,
+            port=port,
+            ssl=ssl_context,
+            server_hostname=host,
+        )
         return cls(reader, writer)
