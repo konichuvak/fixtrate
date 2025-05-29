@@ -261,7 +261,7 @@ class FixSession:
             msg.append_utc_timestamp(
                 TAGS.SendingTime,
                 timestamp=stamp,
-                precision=6,
+                precision=self.config.ts_precision,
                 header=True
             )
 

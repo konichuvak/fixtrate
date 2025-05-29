@@ -20,6 +20,7 @@ class FixSessionConfig(BaseModel):
     qualifier: str
     account: t.Optional[str]
     ssl: t.Optional[SSLContext] = None
+    ts_precision: int = 3
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
